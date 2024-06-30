@@ -1,0 +1,128 @@
+@startuml
+
+class Tarefa {
+    -custo: Float
+    -dt_execucao: Date
+    -dt_conclusao: Date
+    -frequencia: Map<Int, UnTempo>
+    -status: String
+    -complexidade: Complexibilidade
+    +alterarStatus(status: String): void
+    +adicionarPasso(passo: Passo): void
+    +removerPasso(passo: Passo): void
+    +listarPassos(): List<Passo>
+    +getDtConclusao(): Date
+    +getFrequencia(): Map<Int, UnTempo>
+    +setFrequencia(frequencia: Map<Int, UnTempo>): void
+    +getStatus(): String
+    +setStatus(): String
+    +getComplexidade(): Complexibilidade
+}
+
+class Complexibilidade {
+    -area: String
+    -prioridade: Int
+    -tipo_esforco: TipoEsforco
+    +getArea(): String
+    +getPrioridade(): Int
+    +getTipoEsforco(): Int
+}
+
+class Usuario {
+    -nome: String
+    -id: Int
+    -disponibilidade: String
+    +verificarDisponibilidade(): Boolean
+    +adicionarTarefa(tarefa: Tarefa): void
+    +removerTarefa(tarefa: Tarefa): void
+    +listarTarefas(): List<Tarefa>
+    +getDisponibilidade(): String
+}
+
+class Reaproveitamento {
+    -log_tarefa: Map<Tarefa, Date>
+    -passos_salvos: List<Passo>
+    +adicionarLog(tarefa: Tarefa, data: Date): void
+    +recuperarLog(tarefa: Tarefa): Date
+    +salvarPasso(passo: Passo): void
+    +recuperarPasso(indice: Int): Passo
+    +getLogTarefa(): Map<Tarefa, Date>
+    +getPassosSalvos(): List<Passo>
+}
+
+class Passo {
+    -indice: Int
+    -pre_requisitos: List<Passo>
+    -complexidade: Complexibilidade
+    -materiais: List<String>
+    -ordem: OrdemExec
+    +adicionarPreRequisito(passo: Passo): void
+    +removerPreRequisito(passo: Passo): void
+    +listarPreRequisitos(): List<Passo>
+    +getIndice(): Int
+    +getPreRequisitos(): List<Passo>
+    +getComplexidade(): Complexibilidade
+    +getMateriais(): List<String>
+}
+
+class Conciliacao {
+    -disponibilidade: String
+    -ordem: OrdemExec
+    +conciliar(): void
+    +getDisponibilidade(): String
+    +getOrdem(): OrdemExec
+}
+
+class OrdemExec {
+    -passos: List<Passo>
+    -tarefas: List<Tarefa>
+    +gerarOrdem(): void
+    +adicionarPasso(passo: Passo): void
+    +removerPasso(passo: Passo): void
+    +listarPassos(): List<Passo>
+    +adicionarTarefa(tarefa: Tarefa): void
+    +removerTarefa(tarefa: Tarefa): void
+    +listarTarefas(): List<Tarefa>
+    +getPassos(): List<Passo>
+    +getTarefas(): List<Tarefa>
+}
+
+class ListaTarefas {
+    -tarefas: List<Tarefa>
+    +salvarTarefa(tarefa: Tarefa): void
+    +removerTarefa(tarefa: Tarefa): void
+    +listarTarefas(): List<Tarefa>
+    +getTarefas(): List<Tarefa>
+}
+
+enum UnTempo {
+    SEGUNDOS
+    MINUTOS
+    HORAS
+    DIAS
+    SEMANAS
+    MESES
+    ANOS
+}
+enum TipoEsforco {
+    Intelectual
+    Atencional
+    Criativo
+    Fisico
+}
+
+Tarefa "1" *-- "many" Passo: contem
+Tarefa --> Complexibilidade
+Passo --> Complexibilidade
+OrdemExec "1" *-- "many" Passo: contem
+OrdemExec "1" *-- "many" Tarefa: contem
+Conciliacao --> OrdemExec
+Usuario --> Tarefa
+Usuario --> Passo
+Reaproveitamento --> Tarefa
+Reaproveitamento --> Passo
+ListaTarefas "1" *-- "many" Tarefa: contem
+Tarefa --> UnTempo
+Complexibilidade --> TipoEsforco
+
+@enduml
